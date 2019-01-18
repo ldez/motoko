@@ -1,0 +1,65 @@
+project_name: motoko
+
+builds:
+  - binary: motoko
+    env:
+      - GO111MODULE=on
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+      - openbsd
+    goarch:
+      - amd64
+      - 386
+      - arm
+      - arm64
+    goarm:
+      - 7
+      - 6
+      - 5
+
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: openbsd
+        goarch: arm
+      - goos: freebsd
+        goarch: arm
+
+archive:
+  name_template: '{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm}}v{{ .Arm }}{{ end }}'
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
+  files:
+    - LICENSE
+
+#brew:
+#  github:
+#    owner: ldez
+#    name: homebrew-tap
+#  commit_author:
+#    name: ldez
+#    email: ldez@users.noreply.github.com
+#  folder: Formula
+#  homepage: https://github.com/ldez/motoko
+#  description: Based on Go modules, update a dependency to a major version.
+#  test: |
+#    system "#{bin}/motoko version"
+#
+#scoop:
+#  bucket:
+#    owner: ldez
+#    name: scoop-bucket
+#  commit_author:
+#    name: ldez
+#    email: ldez@users.noreply.github.com
+#  homepage: https://github.com/ldez/motoko
+#  description: Based on Go modules, update a dependency to a major version.
+#  license: APACHE
+#
+#release:
+#  disable: true
