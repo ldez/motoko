@@ -51,39 +51,39 @@ func main() {
 		displayVersion()
 		os.Exit(0)
 	case updateCommand.Parsed():
-		lib := *libPtr
-		if len(lib) == 0 {
-			log.Fatal("--lib is required")
-		}
+		updateCmd(*latestPtr, *filenamePtr, *libPtr, *versionPtr)
+	}
+}
 
-		if len(strings.Split(lib, "/")) != 3 {
-			log.Fatal("--lib: invalid format:", lib)
-		}
+func updateCmd(latest, filename bool, lib, version string) {
+	if len(lib) == 0 {
+		log.Fatal("--lib is required")
+	}
 
-		version := *versionPtr
-		latest := *latestPtr
+	if len(strings.Split(lib, "/")) != 3 {
+		log.Fatal("--lib: invalid format:", lib)
+	}
 
-		if len(version) == 0 && !latest {
-			log.Fatal("--version or --latest are required")
-		}
+	if len(version) == 0 && !latest {
+		log.Fatal("--version or --latest are required")
+	}
 
-		dir, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		_, err = os.Stat(path.Join(dir, "go.mod"))
-		if err != nil && os.IsNotExist(err) {
-			log.Fatal("Unable to find 'go.mod':", dir)
-		}
+	_, err = os.Stat(path.Join(dir, "go.mod"))
+	if err != nil && os.IsNotExist(err) {
+		log.Fatal("Unable to find 'go.mod':", dir)
+	}
 
-		fmt.Println(dir)
+	fmt.Println(dir)
 
-		v := getNewVersion(latest, lib, version)
+	v := getNewVersion(latest, lib, version)
 
-		if err := update(dir, lib, v, *filenamePtr); err != nil {
-			log.Fatal(err)
-		}
+	if err := update(dir, lib, v, filename); err != nil {
+		log.Fatal(err)
 	}
 }
 
