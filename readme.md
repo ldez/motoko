@@ -5,42 +5,6 @@
 
 Based on Go modules, update a dependency to a major version.
 
-## How to Install
-
-### Binaries
-
-* To get the binary just download the latest release for your OS/Arch from [the releases page](https://github.com/ldez/motoko/releases)
-* Unzip the archive.
-* Add `motoko` in your `PATH`.
-
-Available for: Linux, MacOS, Windows, FreeBSD, OpenBSD.
-
-### From a package manager
-
-- [ArchLinux (AUR)](https://aur.archlinux.org/packages/motoko/):
-```bash
-yay -S motoko
-```
-
-- [Homebrew Taps](https://github.com/ldez/homebrew-tap)
-```bash
-brew tap ldez/tap
-brew update
-brew install motoko
-```
-
-- [Scoop Bucket](https://github.com/ldez/scoop-bucket)
-```bash
-scoop bucket add motoko https://github.com/ldez/scoop-bucket.git
-scoop install motoko
-```
-
-### From sources
-
-```bash
-go get -u github.com/ldez/motoko
-```
-
 ## How to Use
 
 ### Main
@@ -82,4 +46,40 @@ motoko update --lib github.com/ldez/go-git-cmd-wrapper --latest
 
 # update to a specific version:
 motoko update --lib github.com/ldez/go-git-cmd-wrapper --version 6
+```
+
+## How to Install
+
+### Binaries
+
+* To get the binary just download the latest release for your OS/Arch from [the releases page](https://github.com/ldez/motoko/releases)
+* Unzip the archive.
+* Add `motoko` in your `PATH`.
+
+Available for: Linux, MacOS, Windows, FreeBSD, OpenBSD.
+
+### From a package manager
+
+- [ArchLinux (AUR)](https://aur.archlinux.org/packages/motoko/):
+```bash
+yay -S motoko
+```
+
+- [Homebrew Taps](https://github.com/ldez/homebrew-tap)
+```bash
+brew tap ldez/tap
+brew update
+brew install motoko
+```
+
+- [Scoop Bucket](https://github.com/ldez/scoop-bucket)
+```bash
+scoop bucket add motoko https://github.com/ldez/scoop-bucket.git
+scoop install motoko
+```
+
+### From sources
+
+```bash
+go get -u github.com/ldez/motoko
 ```
