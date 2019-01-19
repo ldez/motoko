@@ -12,7 +12,7 @@ var (
 )
 
 func displayVersion() {
-	fmt.Printf(`sip:
+	fmt.Printf(`motoko:
  version     : %s
  commit      : %s
  build date  : %s
