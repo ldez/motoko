@@ -14,7 +14,7 @@ func main() {
 
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)
 	libPtr := updateCommand.String("lib", "", "Lib to update. (Required)")
-	versionPtr := updateCommand.String("version", "", "Version to set. (Required)")
+	versionPtr := updateCommand.String("version", "", "Version to set.")
 	latestPtr := updateCommand.Bool("latest", false, "Update to the latest available version.")
 	filenamePtr := updateCommand.Bool("filenames", false, "Only display file names.")
 
@@ -68,6 +68,10 @@ func updateCmd(latest, filename bool, lib, version string) {
 		log.Fatal("--version or --latest are required")
 	}
 
+	if len(version) > 0 && latest {
+		log.Fatal("--version and --latest cannot be used at the same time.")
+	}
+
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
@@ -77,8 +81,6 @@ func updateCmd(latest, filename bool, lib, version string) {
 	if err != nil && os.IsNotExist(err) {
 		log.Fatal("Unable to find 'go.mod':", dir)
 	}
-
-	fmt.Println(dir)
 
 	v := getNewVersion(latest, lib, version)
 

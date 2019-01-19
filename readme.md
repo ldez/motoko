@@ -35,7 +35,7 @@ Usage of update:
   -lib string
         Lib to update. (Required)
   -version string
-        Version to set. (Required)
+        Version to set.
 ```
 
 ### Examples
