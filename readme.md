@@ -41,7 +41,9 @@ scoop install motoko
 go get -u github.com/ldez/motoko
 ```
 
-## Main
+## How to Use
+
+### Main
 
 ```bash
 Usage of motoko:
@@ -56,7 +58,7 @@ Flags:
   --help,-h  Display help
 ```
 
-## update
+### Update
 
 **Note**: for now, `--latest` works only with dependency on Github.
 
@@ -72,7 +74,7 @@ Usage of update:
         Version to set. (Required)
 ```
 
-## Examples
+### Examples
 
 ```bash
 # update to the latest version:
