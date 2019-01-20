@@ -8,6 +8,11 @@ import (
 )
 
 func Test_updateCmd(t *testing.T) {
+	if len(os.Getenv("GOOS")) == 0 && len(os.Getenv("GOARCH")) == 0 {
+		t.Skipf("missing compiler information: GOOS=%s GOARCH=%s",
+			os.Getenv("GOOS"), os.Getenv("GOARCH"))
+	}
+
 	testCases := []struct {
 		desc     string
 		version  string
