@@ -37,4 +37,5 @@
   max-same = 0
   exclude = [
     "`(version|commit|date)` is a global variable", # version.go
+    "`(sampleMain|sampleGoMod|sampleGoMod20)` is a global variable", # fixtures.go
   ]

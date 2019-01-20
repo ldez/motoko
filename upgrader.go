@@ -17,7 +17,7 @@ import (
 
 func getNewVersion(latest bool, lib string, version string) string {
 	if !latest {
-		return version
+		return "v" + strings.TrimPrefix(version, "v")
 	}
 
 	split := strings.Split(lib, "/")

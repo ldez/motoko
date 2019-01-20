@@ -1,51 +1,53 @@
 package main
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
-func Test_createNewImport(t *testing.T) {
+func Test_updateCmd(t *testing.T) {
 	testCases := []struct {
-		desc       string
-		parts      []string
-		newVersion string
-		expected   string
+		desc     string
+		version  string
+		expected string
 	}{
 		{
-			desc:       "no version",
-			parts:      []string{"github.com", "ldez", "foobar"},
-			newVersion: "v2",
-			expected:   "github.com/ldez/foobar/v2",
+			desc:     "only number",
+			version:  "20",
+			expected: sampleGoMod20,
 		},
 		{
-			desc:       "version",
-			parts:      []string{"github.com", "ldez", "foobar", "v1"},
-			newVersion: "v2",
-			expected:   "github.com/ldez/foobar/v2",
-		},
-		{
-			desc:       "no version and subpackage",
-			parts:      []string{"github.com", "ldez", "foobar", "foo"},
-			newVersion: "v2",
-			expected:   "github.com/ldez/foobar/v2/foo",
-		},
-		{
-			desc:       "version and subpackage",
-			parts:      []string{"github.com", "ldez", "foobar", "v1", "foo"},
-			newVersion: "v2",
-			expected:   "github.com/ldez/foobar/v2/foo",
+			desc:     "version prefixed by v",
+			version:  "v20",
+			expected: sampleGoMod20,
 		},
 	}
 
 	for _, test := range testCases {
 		test := test
 		t.Run(test.desc, func(t *testing.T) {
-			t.Parallel()
 
-			newImport := createNewImport(test.parts, test.newVersion)
+			dir, cleanUp, err := setupTestProject()
+			defer cleanUp()
+			if err != nil {
+				t.Fatal(err)
+			}
 
-			if newImport != test.expected {
-				t.Errorf("got %s, want %s", newImport, test.expected)
+			if os.Chdir(dir) != nil {
+				t.Fatal(err)
+			}
+
+			updateCmd(false, false, "github.com/google/go-github", test.version)
+
+			content, err := ioutil.ReadFile(filepath.Join(dir, "main.go"))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if string(content) != test.expected {
+				t.Errorf("got diffs:\n%s", quickDiff(string(content), test.expected))
 			}
 		})
 	}
