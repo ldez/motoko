@@ -8,9 +8,10 @@ import (
 )
 
 func Test_updateCmd(t *testing.T) {
-	if len(os.Getenv("GOOS")) == 0 && len(os.Getenv("GOARCH")) == 0 {
-		t.Skipf("missing compiler information: GOOS=%s GOARCH=%s",
-			os.Getenv("GOOS"), os.Getenv("GOARCH"))
+	if os.Getenv("TRAVIS") == "true" {
+		// Because "GetSizesGolist" doesn't work well on Travis.
+		// https://github.com/golang/tools/blob/16909d206f00da7d0d5ba28cd9dc7fb223648ecf/go/internal/packagesdriver/sizes.go#L80
+		t.Skipf("TRAVIS=true")
 	}
 
 	testCases := []struct {
