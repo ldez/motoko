@@ -34,7 +34,6 @@ func Test_updateCmd(t *testing.T) {
 	for _, test := range testCases {
 		test := test
 		t.Run(test.desc, func(t *testing.T) {
-
 			dir, cleanUp, err := setupTestProject()
 			defer cleanUp()
 			if err != nil {

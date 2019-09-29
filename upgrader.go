@@ -32,7 +32,7 @@ func getNewVersion(latest bool, lib string, version string) string {
 
 func update(dir string, lib string, newVersion string, onlyFilename bool) error {
 	config := &packages.Config{
-		Mode:  packages.LoadSyntax,
+		Mode:  packages.NeedName | packages.NeedFiles | packages.NeedCompiledGoFiles | packages.NeedImports | packages.NeedTypes | packages.NeedTypesSizes | packages.NeedSyntax | packages.NeedTypesInfo,
 		Dir:   dir,
 		Tests: true,
 	}
@@ -123,6 +123,8 @@ func getLatestVersion(owner string, repo string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		return "", fmt.Errorf("unable to find latest release URL: %d", resp.StatusCode)
