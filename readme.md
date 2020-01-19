@@ -2,7 +2,7 @@
 
 
 [![release](https://img.shields.io/github/tag/ldez/motoko.svg)](https://github.com/ldez/motoko/releases)
-[![Build Status](https://travis-ci.org/ldez/motoko.svg?branch=master)](https://travis-ci.org/ldez/motoko)
+[![Build Status](https://travis-ci.com/ldez/motoko.svg?branch=master)](https://travis-ci.com/ldez/motoko)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ldez/motoko)](https://goreportcard.com/report/github.com/ldez/motoko)
 
 [![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/ldez)

@@ -29,6 +29,8 @@
     "dupl",
     "prealloc",
     "scopelint",
+    "wsl",
+    "gomnd",
   ]
 
 [issues]
@@ -42,3 +44,7 @@
   [[issues.exclude-rules]]
     path = "fixtures_test.go"
     text = "`(sampleMain|sampleGoMod|sampleGoMod20)` is a global variable"
+
+  [[issues.exclude-rules]]
+    path = "upgrader.go"
+    text = "cognitive complexity (\\d+) of func `update` is high"
