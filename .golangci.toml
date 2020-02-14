@@ -25,10 +25,7 @@
   disable = [
     "maligned",
     "lll",
-    "gas",
     "dupl",
-    "prealloc",
-    "scopelint",
     "wsl",
     "gomnd",
   ]

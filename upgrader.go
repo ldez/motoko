@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"go/format"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -15,24 +14,31 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
-func getNewVersion(latest bool, lib string, version string) string {
+func getNewVersion(latest bool, lib string, version string) (string, error) {
 	if !latest {
-		return "v" + strings.TrimPrefix(version, "v")
+		return cleanModuleVersion(version), nil
 	}
 
 	split := strings.Split(lib, "/")
 	raw, err := getLatestVersion(split[1], split[2])
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	vParts := strings.Split(raw, ".")
-	return "v" + strings.TrimPrefix(vParts[0], "v")
+	return cleanModuleVersion(vParts[0]), nil
+}
+
+func cleanModuleVersion(version string) string {
+	return "v" + strings.TrimPrefix(version, "v")
 }
 
 func update(dir string, lib string, newVersion string, onlyFilename bool) error {
 	config := &packages.Config{
-		Mode:  packages.NeedName | packages.NeedFiles | packages.NeedCompiledGoFiles | packages.NeedImports | packages.NeedTypes | packages.NeedTypesSizes | packages.NeedSyntax | packages.NeedTypesInfo,
+		Mode: packages.NeedName | packages.NeedFiles |
+			packages.NeedCompiledGoFiles | packages.NeedImports |
+			packages.NeedTypes | packages.NeedTypesSizes |
+			packages.NeedSyntax | packages.NeedTypesInfo,
 		Dir:   dir,
 		Tests: true,
 	}
@@ -48,6 +54,7 @@ func update(dir string, lib string, newVersion string, onlyFilename bool) error 
 			for _, imp := range syn.Imports {
 				trim := strings.Trim(imp.Path.Value, `"`)
 				parts := strings.Split(trim, "/")
+
 				if len(parts) >= 3 && strings.Join(parts[:3], "/") == lib {
 					newImp := createNewImport(parts, newVersion)
 					if astutil.RewriteImport(p.Fset, syn, trim, newImp) {

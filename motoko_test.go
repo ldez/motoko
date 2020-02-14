@@ -44,9 +44,16 @@ func Test_updateCmd(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			updateCmd(false, false, "github.com/google/go-github", test.version)
+			cfg := config{
+				lib:     "github.com/google/go-github",
+				version: test.version,
+			}
+			err = updateCmd(cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
 
-			content, err := ioutil.ReadFile(filepath.Join(dir, "main.go"))
+			content, err := ioutil.ReadFile(filepath.Join(filepath.Clean(dir), "main.go"))
 			if err != nil {
 				t.Fatal(err)
 			}

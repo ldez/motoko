@@ -25,7 +25,7 @@ func Test_update(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	content, err := ioutil.ReadFile(filepath.Join(dir, "main.go"))
+	content, err := ioutil.ReadFile(filepath.Join(filepath.Clean(dir), "main.go"))
 	if err != nil {
 		t.Fatal(err)
 	}
