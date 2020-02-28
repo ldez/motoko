@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"testing"
 )
 
 var (
@@ -59,23 +60,23 @@ func main() {
 `
 )
 
-func setupTestProject() (string, func(), error) {
+func setupTestProject(t *testing.T) (string, error) {
 	dir, err := ioutil.TempDir("", "motoko")
 	if err != nil {
-		return "", nil, err
+		return "", err
 	}
 
-	clean := func() { _ = os.RemoveAll(dir) }
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
 
 	if ioutil.WriteFile(filepath.Join(dir, "main.go"), []byte(sampleMain), 0644) != nil {
-		return "", clean, err
+		return "", err
 	}
 
 	if ioutil.WriteFile(filepath.Join(dir, "go.mod"), []byte(sampleGoMod), 0644) != nil {
-		return "", clean, err
+		return "", err
 	}
 
-	return dir, clean, nil
+	return dir, nil
 }
 
 func quickDiff(got, want string) string {

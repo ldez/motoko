@@ -14,8 +14,7 @@ func Test_update(t *testing.T) {
 		t.Skipf("TRAVIS=true")
 	}
 
-	dir, cleanUp, err := setupTestProject()
-	defer cleanUp()
+	dir, err := setupTestProject(t)
 	if err != nil {
 		t.Fatal(err)
 	}
