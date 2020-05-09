@@ -56,7 +56,7 @@ brew:
     email: ldez@users.noreply.github.com
   folder: Formula
   homepage: https://github.com/ldez/motoko
-  description: Based on Go modules, update a dependency to a major version.
+  description: Based on Go modules, update a dependency to a major version
   test: |
     system "#{bin}/motoko version"
 
