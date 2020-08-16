@@ -26,6 +26,7 @@ func getNewVersion(latest bool, lib string, version string) (string, error) {
 	}
 
 	vParts := strings.Split(raw, ".")
+
 	return cleanModuleVersion(vParts[0]), nil
 }
 
@@ -75,13 +76,13 @@ func update(dir string, lib string, newVersion string, onlyFilename bool) error 
 
 			f, err := os.Create(goFileName)
 			if err != nil {
-				return fmt.Errorf("could not create go file %s: %v", goFileName, err)
+				return fmt.Errorf("could not create go file %s: %w", goFileName, err)
 			}
 
 			err = format.Node(f, p.Fset, syn)
 			_ = f.Close()
 			if err != nil {
-				return fmt.Errorf("could not rewrite go file %s: %v", goFileName, err)
+				return fmt.Errorf("could not rewrite go file %s: %w", goFileName, err)
 			}
 		}
 	}

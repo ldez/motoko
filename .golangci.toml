@@ -23,13 +23,14 @@
 [linters]
   enable-all = true
   disable = [
-    "maligned",
     "lll",
     "dupl",
     "wsl",
     "gomnd",
     "goerr113",
     "testpackage",
+    "noctx",
+    "nlreturn",
   ]
 
 [issues]

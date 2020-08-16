@@ -115,6 +115,7 @@ func getCommand(cmds []*flag.FlagSet) *flag.FlagSet {
 			return cmd
 		}
 	}
+
 	return nil
 }
 
