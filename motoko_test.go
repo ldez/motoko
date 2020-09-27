@@ -14,20 +14,39 @@ func Test_updateCmd(t *testing.T) {
 		t.Skipf("TRAVIS=true")
 	}
 
+	type expected struct {
+		code string
+		mod  string
+	}
+
 	testCases := []struct {
 		desc     string
 		version  string
-		expected string
+		expected expected
 	}{
 		{
-			desc:     "only number",
-			version:  "20",
-			expected: sampleGoMod20,
+			desc:    "only number",
+			version: "20",
+			expected: expected{
+				code: sampleMain20,
+				mod:  sampleGoMod20,
+			},
 		},
 		{
-			desc:     "version prefixed by v",
-			version:  "v20",
-			expected: sampleGoMod20,
+			desc:    "version prefixed by v",
+			version: "v20",
+			expected: expected{
+				code: sampleMain20,
+				mod:  sampleGoMod20,
+			},
+		},
+		{
+			desc:    "full version",
+			version: "v20.0.0",
+			expected: expected{
+				code: sampleMain20,
+				mod:  sampleGoMod20,
+			},
 		},
 	}
 
@@ -57,8 +76,17 @@ func Test_updateCmd(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if string(content) != test.expected {
-				t.Errorf("got diffs:\n%s", quickDiff(string(content), test.expected))
+			if string(content) != test.expected.code {
+				t.Errorf("got diffs:\n%s", quickDiff(string(content), test.expected.code))
+			}
+
+			mod, err := ioutil.ReadFile(filepath.Join(filepath.Clean(dir), "go.mod"))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if string(mod) != test.expected.mod {
+				t.Errorf("got diffs:\n%s", quickDiff(string(mod), test.expected.mod))
 			}
 		})
 	}

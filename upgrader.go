@@ -1,40 +1,27 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"go/format"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
 
+	"github.com/andybalholm/cascadia"
+	"github.com/ldez/grignotin/goproxy"
+	"golang.org/x/mod/modfile"
+	"golang.org/x/mod/semver"
+	"golang.org/x/net/html"
 	"golang.org/x/tools/go/ast/astutil"
 	"golang.org/x/tools/go/packages"
 )
 
-func getNewVersion(latest bool, lib string, version string) (string, error) {
-	if !latest {
-		return cleanModuleVersion(version), nil
-	}
-
-	split := strings.Split(lib, "/")
-	raw, err := getLatestVersion(split[1], split[2])
-	if err != nil {
-		return "", err
-	}
-
-	vParts := strings.Split(raw, ".")
-
-	return cleanModuleVersion(vParts[0]), nil
-}
-
-func cleanModuleVersion(version string) string {
-	return "v" + strings.TrimPrefix(version, "v")
-}
-
-func update(dir string, lib string, newVersion string, onlyFilename bool) error {
+func updatePackages(dir string, lib string, newVersion string, onlyFilename bool) error {
 	config := &packages.Config{
 		Mode: packages.NeedName | packages.NeedFiles |
 			packages.NeedCompiledGoFiles | packages.NeedImports |
@@ -117,31 +104,99 @@ func createNewImport(parts []string, newVersion string) string {
 	return strings.Join(np, "/")
 }
 
-func getLatestVersion(owner string, repo string) (string, error) {
-	client := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-		Timeout: 10 * time.Second,
+func updateModFile(dir, lib, full, major string) error {
+	const filename = "go.mod"
+
+	modPath := path.Join(dir, filename)
+
+	content, err := ioutil.ReadFile(filepath.Clean(modPath))
+	if err != nil {
+		return err
 	}
 
-	uri := fmt.Sprintf("https://github.com/%s/%s/releases/latest", owner, repo)
+	file, err := modfile.Parse(filename, content, nil)
+	if err != nil {
+		return err
+	}
 
-	resp, err := client.Get(uri)
+	err = file.AddRequire(path.Join(lib, major), full)
+	if err != nil {
+		return err
+	}
+
+	data, err := file.Format()
+	if err != nil {
+		return err
+	}
+
+	stat, err := os.Stat(modPath)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(modPath, data, stat.Mode())
+}
+
+func guessVersion(lib string, latest bool, rawVersion string) (string, string, error) {
+	if ok, _ := regexp.MatchString(`^v?\d+\.\d+\.\d+.*$`, rawVersion); ok {
+		return rawVersion, semver.Major(rawVersion), nil
+	}
+
+	client := goproxy.NewClient("")
+
+	var moduleName string
+	if latest || rawVersion == "latest" {
+		latestVersion, err := findHighestFromGoPkg(lib)
+		if err != nil {
+			return "", "", err
+		}
+
+		moduleName = path.Join(lib, semver.Major(latestVersion))
+	} else {
+		moduleName = path.Join(lib, "v"+strings.TrimPrefix(rawVersion, "v"))
+	}
+
+	lst, err := client.GetLatest(moduleName)
+	if err != nil {
+		return "", "", err
+	}
+
+	return lst.Version, semver.Major(lst.Version), nil
+}
+
+func findHighestFromGoPkg(lib string) (string, error) {
+	licenseURL := fmt.Sprintf("https://pkg.go.dev/%s?tab=licenses", lib)
+
+	req, err := http.NewRequest(http.MethodGet, licenseURL, nil)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
 	}
 
 	defer func() { _ = resp.Body.Close() }()
 
-	if resp.StatusCode >= http.StatusBadRequest {
-		return "", fmt.Errorf("unable to find latest release URL: %d", resp.StatusCode)
-	}
-
-	u, err := resp.Location()
+	doc, err := html.Parse(resp.Body)
 	if err != nil {
 		return "", err
 	}
 
-	return path.Base(u.String()), nil
+	compile := cascadia.MustCompile("html body.Site main.Site-content div.Container header.DetailsHeader div.DetailsHeader-banner p a")
+
+	node := cascadia.Query(doc, compile)
+	if node != nil && node.FirstChild != nil {
+		client := goproxy.NewClient("")
+
+		latest, err := client.GetLatest(path.Join(lib, node.FirstChild.Data))
+		if err != nil {
+			return "", err
+		}
+
+		return latest.Version, nil
+	}
+
+	return "", errors.New("highest major version not found")
 }

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -33,13 +32,17 @@ func main() {
 
 	sampleGoMod = `module motoko.test
 
+go 1.15
+
+// test
 require (
+	// test
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 )
 `
 
-	sampleGoMod20 = `package main // import "motoko.test"
+	sampleMain20 = `package main // import "motoko.test"
 
 import (
 	"context"
@@ -58,21 +61,31 @@ func main() {
 	fmt.Println(octocat)
 }
 `
+
+	sampleGoMod20 = `module motoko.test
+
+go 1.15
+
+// test
+require (
+	// test
+	github.com/google/go-github v17.0.0+incompatible
+	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/google/go-github/v20 v20.0.0
+)
+`
 )
 
 func setupTestProject(t *testing.T) (string, error) {
-	dir, err := ioutil.TempDir("", "motoko")
+	dir := t.TempDir()
+
+	err := ioutil.WriteFile(filepath.Join(dir, "main.go"), []byte(sampleMain), 0644)
 	if err != nil {
 		return "", err
 	}
 
-	t.Cleanup(func() { _ = os.RemoveAll(dir) })
-
-	if ioutil.WriteFile(filepath.Join(dir, "main.go"), []byte(sampleMain), 0644) != nil {
-		return "", err
-	}
-
-	if ioutil.WriteFile(filepath.Join(dir, "go.mod"), []byte(sampleGoMod), 0644) != nil {
+	err = ioutil.WriteFile(filepath.Join(dir, "go.mod"), []byte(sampleGoMod), 0644)
+	if err != nil {
 		return "", err
 	}
 

@@ -8,7 +8,7 @@
     check-shadowing = true
 
   [linters-settings.gocyclo]
-    min-complexity = 12.0
+    min-complexity = 14.0
 
   [linters-settings.maligned]
     suggest-new = true
@@ -38,13 +38,17 @@
   max-per-linter = 0
   max-same-issues = 0
   exclude = ["G306"]
+
+  [[issues.exclude-rules]]
+    path = "(.+)_test.go"
+    linters = ["funlen"]
   [[issues.exclude-rules]]
     path = "version.go"
     text = "`(version|date|commit)` is a global variable"
   [[issues.exclude-rules]]
     path = "fixtures_test.go"
-    text = "`(sampleMain|sampleGoMod|sampleGoMod20)` is a global variable"
+    text = "`(sampleMain|sampleGoMod|sampleMain20|sampleGoMod20)` is a global variable"
 
   [[issues.exclude-rules]]
     path = "upgrader.go"
-    text = "cognitive complexity (\\d+) of func `update` is high"
+    text = "cognitive complexity (\\d+) of func `updatePackages` is high"

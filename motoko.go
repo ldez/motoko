@@ -101,12 +101,21 @@ func updateCmd(cfg config) error {
 		return fmt.Errorf("unable to find 'go.mod': %s", dir)
 	}
 
-	v, err := getNewVersion(cfg.latest, cfg.lib, cfg.version)
+	if cfg.latest {
+		cfg.version = ""
+	}
+
+	full, mj, err := guessVersion(cfg.lib, cfg.latest, cfg.version)
 	if err != nil {
 		return err
 	}
 
-	return update(dir, cfg.lib, v, cfg.filename)
+	err = updatePackages(dir, cfg.lib, mj, cfg.filename)
+	if err != nil {
+		return err
+	}
+
+	return updateModFile(dir, cfg.lib, full, mj)
 }
 
 func getCommand(cmds []*flag.FlagSet) *flag.FlagSet {

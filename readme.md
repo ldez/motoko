@@ -27,8 +27,6 @@ Flags:
 
 ### Update
 
-**Note**: for now, `--latest` works only with dependency on Github.
-
 ```bash
 Usage of update:
   -filenames
@@ -47,8 +45,11 @@ Usage of update:
 # update to the latest version:
 motoko update --lib github.com/ldez/go-git-cmd-wrapper --latest
 
-# update to a specific version:
+# update to a specific major version:
 motoko update --lib github.com/ldez/go-git-cmd-wrapper --version 6
+
+# update to a specific version:
+motoko update --lib github.com/ldez/go-git-cmd-wrapper --version v6.0.0
 ```
 
 ## How to Install
