@@ -9,7 +9,7 @@ cache:
   directories:
     - $GOPATH/pkg/mod
 
-matrix:
+jobs:
   fast_finish: true
   include:
     - go: 1.15.x
