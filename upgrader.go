@@ -184,7 +184,7 @@ func findHighestFromGoPkg(lib string) (string, error) {
 		return "", err
 	}
 
-	compile := cascadia.MustCompile("html body.Site main.Site-content div.Container header.DetailsHeader div.DetailsHeader-banner p a")
+	compile := cascadia.MustCompile("html body.Site.Site--wide main.Site-content div.Container header.UnitHeader div.UnitHeader-container div.UnitHeader-versionBanner span a")
 
 	node := cascadia.Query(doc, compile)
 	if node != nil && node.FirstChild != nil {

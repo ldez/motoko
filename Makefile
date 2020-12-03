@@ -1,6 +1,4 @@
-.PHONY: clean check test build fmt
-
-GOFILES := $(shell git ls-files '*.go' | grep -v '^vendor/')
+.PHONY: clean check test build
 
 TAG_NAME := $(shell git tag -l --contains HEAD)
 SHA := $(shell git rev-parse --short HEAD)
@@ -21,6 +19,3 @@ build: clean
 
 check:
 	golangci-lint run
-
-fmt:
-	@gofmt -s -l -w $(GOFILES)

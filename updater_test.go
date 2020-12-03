@@ -133,21 +133,21 @@ func Test_guessVersion(t *testing.T) {
 			},
 		},
 		{
-			desc:           "",
+			desc:           "latest major (go-github)",
 			baseModuleName: "github.com/google/go-github",
 			raw:            "latest",
 			expected: expected{
-				Major: "v32",
-				Full:  "v32.1.0",
+				Major: "v33",
+				Full:  "v33.0.0",
 			},
 		},
 		{
-			desc:           "",
+			desc:           "latest major (backoff)",
 			baseModuleName: "github.com/cenkalti/backoff",
 			raw:            "latest",
 			expected: expected{
 				Major: "v4",
-				Full:  "v4.0.2",
+				Full:  "v4.1.0",
 			},
 		},
 	}
