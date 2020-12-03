@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go/build"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -8,10 +9,10 @@ import (
 )
 
 func Test_updateCmd(t *testing.T) {
-	if os.Getenv("TRAVIS") == "true" {
-		// Because "GetSizesGolist" doesn't work well on Travis.
-		// https://github.com/golang/tools/blob/16909d206f00da7d0d5ba28cd9dc7fb223648ecf/go/internal/packagesdriver/sizes.go#L80
-		t.Skipf("TRAVIS=true")
+	if os.Getenv("CI") == "true" && build.Default.GOOS == "windows" {
+		// Because the cleanup doesn't work well on Windows in GitHub Actions
+		// The process cannot access the file because it is being used by another process.
+		t.Skipf("Windows and GitHub Actions")
 	}
 
 	type expected struct {
