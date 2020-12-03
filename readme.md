@@ -1,7 +1,7 @@
 # Motoko (Major Motoko Kusanagi)
 
 [![release](https://img.shields.io/github/tag/ldez/motoko.svg)](https://github.com/ldez/motoko/releases)
-[![Build Status](https://travis-ci.com/ldez/motoko.svg?branch=master)](https://travis-ci.com/ldez/motoko)
+[![Build Status](https://github.com/ldez/motoko/workflows/Main/badge.svg?branch=master)](https://github.com/ldez/motoko/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ldez/motoko)](https://goreportcard.com/report/github.com/ldez/motoko)
 
 [![Sponsor me](https://img.shields.io/badge/Sponsor%20me-%E2%9D%A4%EF%B8%8F-pink.svg)](https://github.com/sponsors/ldez)

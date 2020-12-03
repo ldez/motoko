@@ -26,11 +26,15 @@
     "lll",
     "dupl",
     "wsl",
+    "nlreturn",
     "gomnd",
     "goerr113",
+    "wrapcheck",
     "testpackage",
+    "paralleltest",
+    "tparallel",
     "noctx",
-    "nlreturn",
+    "exhaustivestruct",
   ]
 
 [issues]
@@ -42,12 +46,13 @@
   [[issues.exclude-rules]]
     path = "(.+)_test.go"
     linters = ["funlen"]
+
   [[issues.exclude-rules]]
     path = "version.go"
-    text = "`(version|date|commit)` is a global variable"
+    text = "(version|date|commit) is a global variable"
   [[issues.exclude-rules]]
     path = "fixtures_test.go"
-    text = "`(sampleMain|sampleGoMod|sampleMain20|sampleGoMod20)` is a global variable"
+    text = "(sampleMain|sampleGoMod|sampleMain20|sampleGoMod20) is a global variable"
 
   [[issues.exclude-rules]]
     path = "upgrader.go"
