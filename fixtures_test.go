@@ -77,6 +77,8 @@ require (
 )
 
 func setupTestProject(t *testing.T) (string, error) {
+	t.Helper()
+
 	dir := t.TempDir()
 
 	err := ioutil.WriteFile(filepath.Join(dir, "main.go"), []byte(sampleMain), 0644)

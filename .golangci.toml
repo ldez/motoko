@@ -35,6 +35,8 @@
     "tparallel",
     "noctx",
     "exhaustivestruct",
+    "makezero",
+    "forbidigo",
   ]
 
 [issues]
