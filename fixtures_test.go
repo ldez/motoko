@@ -3,45 +3,14 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 )
 
-var (
-	sampleMain = `package main // import "motoko.test"
-
-import (
-    "fmt"
-    "context"
-
-    "github.com/google/go-github/github"
-)
-
-func main() {
-  client := github.NewClient(nil)
-
-    octocat, _, err := client.Octocat(context.Background(), "Go modules!")
-    if err != nil {
-        panic(err)
-    }
-    fmt.Println(octocat)
-}
-`
-
-	sampleGoMod = `module motoko.test
-
-go 1.15
-
-// test
-require (
-	// test
-	github.com/google/go-github v17.0.0+incompatible
-	github.com/google/go-querystring v1.0.0 // indirect
-)
-`
-
+const (
 	sampleMain20 = `package main // import "motoko.test"
 
 import (
@@ -81,17 +50,35 @@ func setupTestProject(t *testing.T) (string, error) {
 
 	dir := t.TempDir()
 
-	err := ioutil.WriteFile(filepath.Join(dir, "main.go"), []byte(sampleMain), 0644)
-	if err != nil {
-		return "", err
-	}
-
-	err = ioutil.WriteFile(filepath.Join(dir, "go.mod"), []byte(sampleGoMod), 0644)
-	if err != nil {
-		return "", err
+	for _, filename := range []string{"main.go", "go.mod", "go.sum"} {
+		err := copyFile(dir, filename)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return dir, nil
+}
+
+func copyFile(dir, filename string) error {
+	src, err := os.Open(filepath.FromSlash("./testdata/a/" + filename))
+	if err != nil {
+		return err
+	}
+	defer func() { _ = src.Close() }()
+
+	dst, err := os.Create(filepath.Join(dir, filename))
+	if err != nil {
+		return err
+	}
+	defer func() { _ = dst.Close() }()
+
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func quickDiff(got, want string) string {

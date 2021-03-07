@@ -1,6 +1,6 @@
 module github.com/ldez/motoko
 
-go 1.15
+go 1.16
 
 require (
 	github.com/andybalholm/cascadia v1.2.0

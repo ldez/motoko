@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"go/format"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -21,7 +20,7 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
-func updatePackages(dir string, lib string, newVersion string, onlyFilename bool) error {
+func updatePackages(dir, lib, newVersion string, onlyFilename bool) error {
 	config := &packages.Config{
 		Mode: packages.NeedName | packages.NeedFiles |
 			packages.NeedCompiledGoFiles | packages.NeedImports |
@@ -33,7 +32,7 @@ func updatePackages(dir string, lib string, newVersion string, onlyFilename bool
 
 	pkgs, err := packages.Load(config, "./...")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	for _, p := range pkgs {
@@ -44,7 +43,11 @@ func updatePackages(dir string, lib string, newVersion string, onlyFilename bool
 				parts := strings.Split(trim, "/")
 
 				if len(parts) >= 3 && strings.Join(parts[:3], "/") == lib {
-					newImp := createNewImport(parts, newVersion)
+					newImp, err := createNewImport(parts, newVersion)
+					if err != nil {
+						return err
+					}
+
 					if astutil.RewriteImport(p.Fset, syn, trim, newImp) {
 						rewritten = true
 					}
@@ -77,9 +80,9 @@ func updatePackages(dir string, lib string, newVersion string, onlyFilename bool
 	return nil
 }
 
-func createNewImport(parts []string, newVersion string) string {
+func createNewImport(parts []string, newVersion string) (string, error) {
 	if len(parts) < 3 {
-		panic(fmt.Sprintf("unsupported package format: %s", strings.Join(parts, "/")))
+		return "", fmt.Errorf("unsupported package format: %s", strings.Join(parts, "/"))
 	}
 
 	np := make([]string, 3)
@@ -88,7 +91,7 @@ func createNewImport(parts []string, newVersion string) string {
 
 	if len(parts) == 3 {
 		// no version
-		return strings.Join(np, "/")
+		return strings.Join(np, "/"), nil
 	}
 
 	if ok, _ := regexp.MatchString(`v\d+`, parts[3]); ok {
@@ -101,7 +104,7 @@ func createNewImport(parts []string, newVersion string) string {
 		np = append(np, parts[3:]...)
 	}
 
-	return strings.Join(np, "/")
+	return strings.Join(np, "/"), nil
 }
 
 func updateModFile(dir, lib, full, major string) error {
@@ -109,7 +112,7 @@ func updateModFile(dir, lib, full, major string) error {
 
 	modPath := path.Join(dir, filename)
 
-	content, err := ioutil.ReadFile(filepath.Clean(modPath))
+	content, err := os.ReadFile(filepath.Clean(modPath))
 	if err != nil {
 		return err
 	}
@@ -134,7 +137,7 @@ func updateModFile(dir, lib, full, major string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(modPath, data, stat.Mode())
+	return os.WriteFile(modPath, data, stat.Mode())
 }
 
 func guessVersion(lib string, latest bool, rawVersion string) (string, string, error) {
@@ -184,7 +187,7 @@ func findHighestFromGoPkg(lib string) (string, error) {
 		return "", err
 	}
 
-	compile := cascadia.MustCompile("html body.Site.Site--wide main.Site-content div.Container header.UnitHeader div.UnitHeader-container div.UnitHeader-majorVersionBanner span a")
+	compile := cascadia.MustCompile("html body.Site.Site--wide.Site--redesign div.Site-content div.Container header.UnitHeader div.UnitHeader-container div.UnitHeader-majorVersionBanner span a")
 
 	node := cascadia.Query(doc, compile)
 	if node != nil && node.FirstChild != nil {

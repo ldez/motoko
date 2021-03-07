@@ -2,7 +2,6 @@ package main
 
 import (
 	"go/build"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -59,6 +58,12 @@ func Test_updateCmd(t *testing.T) {
 				t.Fatal(err)
 			}
 
+			wd, err := os.Getwd()
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Cleanup(func() { _ = os.Chdir(wd) })
+
 			if os.Chdir(dir) != nil {
 				t.Fatal(err)
 			}
@@ -72,7 +77,7 @@ func Test_updateCmd(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			content, err := ioutil.ReadFile(filepath.Join(filepath.Clean(dir), "main.go"))
+			content, err := os.ReadFile(filepath.Join(filepath.Clean(dir), "main.go"))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -81,7 +86,7 @@ func Test_updateCmd(t *testing.T) {
 				t.Errorf("got diffs:\n%s", quickDiff(string(content), test.expected.code))
 			}
 
-			mod, err := ioutil.ReadFile(filepath.Join(filepath.Clean(dir), "go.mod"))
+			mod, err := os.ReadFile(filepath.Join(filepath.Clean(dir), "go.mod"))
 			if err != nil {
 				t.Fatal(err)
 			}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -24,7 +23,7 @@ func Test_updatePackages(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	content, err := ioutil.ReadFile(filepath.Join(filepath.Clean(dir), "main.go"))
+	content, err := os.ReadFile(filepath.Join(filepath.Clean(dir), "main.go"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -72,7 +71,10 @@ func Test_createNewImport(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
-			newImport := createNewImport(test.parts, test.newVersion)
+			newImport, err := createNewImport(test.parts, test.newVersion)
+			if err != nil {
+				t.Fatal(err)
+			}
 
 			if newImport != test.expected {
 				t.Errorf("got %s, want %s", newImport, test.expected)
@@ -92,7 +94,7 @@ func Test_updateModFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mod, err := ioutil.ReadFile(filepath.Join(filepath.Clean(dir), "go.mod"))
+	mod, err := os.ReadFile(filepath.Join(filepath.Clean(dir), "go.mod"))
 	if err != nil {
 		t.Fatal(err)
 	}

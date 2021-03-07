@@ -75,7 +75,7 @@ func main() {
 }
 
 func updateCmd(cfg config) error {
-	if len(cfg.lib) == 0 {
+	if cfg.lib == "" {
 		return errors.New("--lib is required")
 	}
 
@@ -83,11 +83,11 @@ func updateCmd(cfg config) error {
 		return fmt.Errorf("--lib: invalid format: %s", cfg.lib)
 	}
 
-	if len(cfg.version) == 0 && !cfg.latest {
+	if cfg.version == "" && !cfg.latest {
 		return errors.New("--version or --latest are required")
 	}
 
-	if len(cfg.version) > 0 && cfg.latest {
+	if cfg.version != "" && cfg.latest {
 		return errors.New("--version and --latest cannot be used at the same time")
 	}
 

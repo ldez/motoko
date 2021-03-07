@@ -1,0 +1,88 @@
+run:
+  deadline: 2m
+  skip-files: []
+
+linters-settings:
+  govet:
+    check-shadowing: true
+  gocyclo:
+    min-complexity: 14
+  maligned:
+    suggest-new: true
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  misspell:
+    locale: US
+
+  gofumpt:
+    extra-rules: true
+  depguard:
+    list-type: blacklist
+    include-go-root: false
+    packages:
+      - github.com/pkg/errors
+  godox:
+    keywords:
+      - FIXME
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+    disabled-checks:
+      - unnamedResult
+      - sloppyReassign
+      - rangeValCopy
+      - octalLiteral
+      - paramTypeCombine # already handle by gofumpt.extra-rules
+    settings:
+      hugeParam:
+        sizeThreshold: 100
+  forbidigo:
+    forbid:
+      - '^print(ln)?$'
+      - '^panic$'
+      - '^spew\.Print(f|ln)?$'
+      - '^spew\.Dump$'
+
+linters:
+  enable-all: true
+  disable:
+    - scopelint # deprecated
+    - interfacer # deprecated
+    - maligned # deprecated
+    - sqlclosecheck # not relevant (SQL)
+    - rowserrcheck # not relevant (SQL)
+    - cyclop # duplicate of gocyclo
+    - lll
+    - dupl
+    - wsl
+    - nlreturn
+    - gomnd
+    - goerr113
+    - wrapcheck
+    - testpackage
+    - paralleltest
+    - tparallel
+    - noctx
+    - exhaustive
+    - exhaustivestruct
+    - makezero
+
+issues:
+  exclude-use-default: false
+  max-per-linter: 0
+  max-same-issues: 0
+  exclude:
+    - G306
+  exclude-rules:
+    - path: (.+)_test.go
+      linters:
+        - funlen
+    - path: version.go
+      text: (version|date|commit) is a global variable
+    - path: fixtures_test.go
+      text: (sampleMain20|sampleGoMod20) is a global variable
+    - path: upgrader.go
+      text: cognitive complexity (\d+) of func `updatePackages` is high
