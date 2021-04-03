@@ -3,15 +3,24 @@ package main
 import (
 	"fmt"
 	"runtime"
+	"runtime/debug"
 )
 
 var (
 	version = "dev"
-	commit  = "I don't remember exactly"
-	date    = "I don't remember exactly"
+	commit  = "-"
+	date    = ""
 )
 
 func displayVersion() {
+	if info, available := debug.ReadBuildInfo(); available {
+		if date == "" {
+			version = info.Main.Version
+			commit = fmt.Sprintf("(unknown, mod sum: %q)", info.Main.Sum)
+			date = "(unknown)"
+		}
+	}
+
 	fmt.Printf(`motoko:
  version     : %s
  commit      : %s
