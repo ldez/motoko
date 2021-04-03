@@ -85,5 +85,9 @@ scoop install motoko
 ### From sources
 
 ```bash
-go get -u github.com/ldez/motoko
+go install github.com/ldez/motoko@latest
+
+# or 
+
+go install github.com/ldez/motoko@v0.2.4
 ```
