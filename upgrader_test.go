@@ -139,8 +139,8 @@ func Test_guessVersion(t *testing.T) {
 			baseModuleName: "github.com/google/go-github",
 			raw:            "latest",
 			expected: expected{
-				Major: "v34",
-				Full:  "v34.0.0",
+				Major: "v37",
+				Full:  "v37.0.0",
 			},
 		},
 		{
@@ -149,7 +149,7 @@ func Test_guessVersion(t *testing.T) {
 			raw:            "latest",
 			expected: expected{
 				Major: "v4",
-				Full:  "v4.1.0",
+				Full:  "v4.1.1",
 			},
 		},
 	}

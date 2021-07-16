@@ -168,7 +168,8 @@ func guessVersion(lib string, latest bool, rawVersion string) (string, string, e
 }
 
 func findHighestFromGoPkg(lib string) (string, error) {
-	licenseURL := fmt.Sprintf("https://pkg.go.dev/%s?tab=licenses", lib)
+	fmt.Println("findHighestFromGoPkg")
+	licenseURL := fmt.Sprintf("https://pkg.go.dev/%s", lib)
 
 	req, err := http.NewRequest(http.MethodGet, licenseURL, nil)
 	if err != nil {
@@ -187,7 +188,7 @@ func findHighestFromGoPkg(lib string) (string, error) {
 		return "", err
 	}
 
-	compile := cascadia.MustCompile("div.UnitHeader-banner.UnitHeader-banner--majorVersion span a")
+	compile := cascadia.MustCompile("div.go-Main-banner div.go-Message.go-Message--notice a")
 
 	node := cascadia.Query(doc, compile)
 	if node != nil && node.FirstChild != nil {
