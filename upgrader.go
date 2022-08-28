@@ -170,7 +170,7 @@ func guessVersion(lib string, latest bool, rawVersion string) (string, string, e
 func findHighestFromGoPkg(lib string) (string, error) {
 	licenseURL := fmt.Sprintf("https://pkg.go.dev/%s", lib)
 
-	req, err := http.NewRequest(http.MethodGet, licenseURL, nil)
+	req, err := http.NewRequest(http.MethodGet, licenseURL, http.NoBody)
 	if err != nil {
 		return "", err
 	}

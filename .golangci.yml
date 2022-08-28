@@ -1,5 +1,5 @@
 run:
-  deadline: 2m
+  timeout: 2m
   skip-files: []
 
 linters-settings:
@@ -7,14 +7,11 @@ linters-settings:
     check-shadowing: true
   gocyclo:
     min-complexity: 14
-  maligned:
-    suggest-new: true
   goconst:
     min-len: 3
     min-occurrences: 3
   misspell:
     locale: US
-
   gofumpt:
     extra-rules: true
   depguard:
@@ -45,14 +42,25 @@ linters-settings:
       - '^panic$'
       - '^spew\.Print(f|ln)?$'
       - '^spew\.Dump$'
+  gosec:
+    excludes:
+      - G306
+      - G304
 
 linters:
   enable-all: true
   disable:
-    - golint # deprecated
     - scopelint # deprecated
     - interfacer # deprecated
     - maligned # deprecated
+    - golint # deprecated
+    - exhaustivestruct # deprecated
+    - scopelint # deprecated
+    - varcheck # deprecated
+    - structcheck # deprecated
+    - nosnakecase # deprecated
+    - deadcode # deprecated
+    - ifshort # deprecated
     - sqlclosecheck # not relevant (SQL)
     - rowserrcheck # not relevant (SQL)
     - cyclop # duplicate of gocyclo
@@ -68,15 +76,16 @@ linters:
     - tparallel
     - noctx
     - exhaustive
-    - exhaustivestruct
+    - exhaustruct
     - makezero
+    - varnamelen
 
 issues:
   exclude-use-default: false
   max-per-linter: 0
   max-same-issues: 0
   exclude:
-    - G306
+    - 'package-comments: should have a package comment'
   exclude-rules:
     - path: (.+)_test.go
       linters:
