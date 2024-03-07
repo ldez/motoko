@@ -61,16 +61,13 @@ brews:
     test: |
       system "#{bin}/motoko version"
 
-scoop:
-  repository:
-    owner: ldez
-    name: scoop-bucket
-  commit_author:
-    name: ldez
-    email: ldez@users.noreply.github.com
-  homepage: https://github.com/ldez/motoko
-  description: Based on Go modules, update a dependency to a major version.
-  license: APACHE
-
-#release:
-#  disable: true
+scoops:
+  - repository:
+      owner: ldez
+      name: scoop-bucket
+    commit_author:
+      name: ldez
+      email: ldez@users.noreply.github.com
+    homepage: https://github.com/ldez/motoko
+    description: Based on Go modules, update a dependency to a major version.
+    license: APACHE
