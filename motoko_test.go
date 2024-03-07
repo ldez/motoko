@@ -92,6 +92,7 @@ func Test_updateCmd(t *testing.T) {
 			}
 
 			if string(mod) != test.expected.mod {
+				t.Log(string(mod))
 				t.Errorf("got diffs:\n%s", quickDiff(string(mod), test.expected.mod))
 			}
 		})

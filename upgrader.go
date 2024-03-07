@@ -122,10 +122,23 @@ func updateModFile(dir, lib, full, major string) error {
 		return err
 	}
 
+	for _, require := range file.Require {
+		if !strings.HasPrefix(require.Mod.Path, lib) || require.Indirect {
+			continue
+		}
+
+		err = file.DropRequire(require.Mod.Path)
+		if err != nil {
+			return err
+		}
+	}
+
 	err = file.AddRequire(path.Join(lib, major), full)
 	if err != nil {
 		return err
 	}
+
+	file.Cleanup()
 
 	data, err := file.Format()
 	if err != nil {
