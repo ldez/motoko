@@ -49,7 +49,7 @@ archives:
       - LICENSE
 
 brews:
-  - tap:
+  - repository:
       owner: ldez
       name: homebrew-tap
     commit_author:
@@ -62,7 +62,7 @@ brews:
       system "#{bin}/motoko version"
 
 scoop:
-  bucket:
+  repository:
     owner: ldez
     name: scoop-bucket
   commit_author:

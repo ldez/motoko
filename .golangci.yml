@@ -15,10 +15,13 @@ linters-settings:
   gofumpt:
     extra-rules: true
   depguard:
-    list-type: blacklist
-    include-go-root: false
-    packages:
-      - github.com/pkg/errors
+    rules:
+      main:
+        deny:
+          - pkg: "github.com/instana/testify"
+            desc: not allowed
+          - pkg: "github.com/pkg/errors"
+            desc: Should be replaced by standard lib errors package
   godox:
     keywords:
       - FIXME
@@ -82,7 +85,7 @@ linters:
 
 issues:
   exclude-use-default: false
-  max-per-linter: 0
+  max-issues-per-linter: 0
   max-same-issues: 0
   exclude:
     - 'package-comments: should have a package comment'
@@ -96,3 +99,5 @@ issues:
       text: (sampleMain20|sampleGoMod20) is a global variable
     - path: upgrader.go
       text: cognitive complexity (\d+) of func `updatePackages` is high
+    - linters: [ perfsprint ]
+      text: 'fmt.Sprintf can be replaced with string'
