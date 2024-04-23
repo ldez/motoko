@@ -67,7 +67,6 @@ func Test_createNewImport(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
@@ -139,8 +138,8 @@ func Test_guessVersion(t *testing.T) {
 			baseModuleName: "github.com/google/go-github",
 			raw:            "latest",
 			expected: expected{
-				Major: "v60",
-				Full:  "v60.0.0",
+				Major: "v61",
+				Full:  "v61.0.0",
 			},
 		},
 		{
@@ -149,13 +148,12 @@ func Test_guessVersion(t *testing.T) {
 			raw:            "latest",
 			expected: expected{
 				Major: "v4",
-				Full:  "v4.2.1",
+				Full:  "v4.3.0",
 			},
 		},
 	}
 
 	for _, test := range testCases {
-		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
