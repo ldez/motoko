@@ -133,14 +133,14 @@ func commandsUsage(cmds []*flag.FlagSet) {
 
 	output := flag.CommandLine.Output()
 
-	fmt.Fprintf(output, "\n  %s <command> [<flags>]\n\n", path.Base(os.Args[0]))
-	fmt.Fprintln(output, "Commands:")
+	_, _ = fmt.Fprintf(output, "\n  %s <command> [<flags>]\n\n", path.Base(os.Args[0]))
+	_, _ = fmt.Fprintln(output, "Commands:")
 
 	for _, cmd := range cmds {
-		fmt.Fprintf(output, "  %-8s [<flags>]\n", cmd.Name())
+		_, _ = fmt.Fprintf(output, "  %-8s [<flags>]\n", cmd.Name())
 	}
 
-	fmt.Fprintln(output)
-	fmt.Fprintln(output, "Flags:")
-	fmt.Fprintln(output, "  --help,-h  Display help")
+	_, _ = fmt.Fprintln(output)
+	_, _ = fmt.Fprintln(output, "Flags:")
+	_, _ = fmt.Fprintln(output, "  --help,-h  Display help")
 }

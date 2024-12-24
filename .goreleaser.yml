@@ -1,3 +1,5 @@
+version: 2
+
 project_name: motoko
 
 builds:
@@ -55,7 +57,7 @@ brews:
     commit_author:
       name: ldez
       email: ldez@users.noreply.github.com
-    folder: Formula
+    directory: Formula
     homepage: https://github.com/ldez/motoko
     description: Based on Go modules, update a dependency to a major version
     test: |

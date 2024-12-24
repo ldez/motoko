@@ -1,5 +1,25 @@
-run:
-  timeout: 2m
+linters:
+  enable-all: true
+  disable:
+    - exportloopref # deprecated
+    - sqlclosecheck # not relevant (SQL)
+    - rowserrcheck # not relevant (SQL)
+    - cyclop # duplicate of gocyclo
+    - lll
+    - dupl
+    - wsl
+    - nlreturn
+    - mnd
+    - err113
+    - wrapcheck
+    - testpackage
+    - paralleltest
+    - tparallel
+    - noctx
+    - exhaustive
+    - exhaustruct
+    - makezero
+    - varnamelen
 
 linters-settings:
   govet:
@@ -55,39 +75,6 @@ linters-settings:
     sprintf1: true
     strconcat: false
 
-linters:
-  enable-all: true
-  disable:
-    - scopelint # deprecated
-    - interfacer # deprecated
-    - maligned # deprecated
-    - golint # deprecated
-    - exhaustivestruct # deprecated
-    - scopelint # deprecated
-    - varcheck # deprecated
-    - structcheck # deprecated
-    - nosnakecase # deprecated
-    - deadcode # deprecated
-    - ifshort # deprecated
-    - sqlclosecheck # not relevant (SQL)
-    - rowserrcheck # not relevant (SQL)
-    - cyclop # duplicate of gocyclo
-    - lll
-    - dupl
-    - wsl
-    - nlreturn
-    - gomnd
-    - goerr113
-    - wrapcheck
-    - testpackage
-    - paralleltest
-    - tparallel
-    - noctx
-    - exhaustive
-    - exhaustruct
-    - makezero
-    - varnamelen
-
 issues:
   exclude-use-default: false
   max-issues-per-linter: 0
@@ -104,3 +91,6 @@ issues:
       text: (sampleMain20|sampleGoMod20) is a global variable
     - path: upgrader.go
       text: cognitive complexity (\d+) of func `updatePackages` is high
+
+run:
+  timeout: 2m
