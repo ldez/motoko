@@ -63,12 +63,14 @@ func copyFile(dir, filename string) error {
 	if err != nil {
 		return err
 	}
+
 	defer func() { _ = src.Close() }()
 
 	dst, err := os.Create(filepath.Join(dir, filename))
 	if err != nil {
 		return err
 	}
+
 	defer func() { _ = dst.Close() }()
 
 	_, err = io.Copy(dst, src)

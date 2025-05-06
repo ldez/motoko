@@ -1,96 +1,99 @@
+version: "2"
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+  settings:
+    gofumpt:
+      extra-rules: true
+
 linters:
-  enable-all: true
+  default: all
   disable:
-    - exportloopref # deprecated
-    - sqlclosecheck # not relevant (SQL)
-    - rowserrcheck # not relevant (SQL)
     - cyclop # duplicate of gocyclo
-    - lll
     - dupl
-    - wsl
-    - nlreturn
-    - mnd
     - err113
-    - wrapcheck
-    - testpackage
-    - paralleltest
-    - tparallel
-    - noctx
     - exhaustive
     - exhaustruct
+    - lll
     - makezero
+    - mnd
+    - nlreturn
+    - noctx
+    - paralleltest
+    - rowserrcheck # not relevant (SQL)
+    - sqlclosecheck # not relevant (SQL)
+    - testpackage
+    - tparallel
     - varnamelen
+    - wrapcheck
 
-linters-settings:
-  govet:
-    enable:
-      - shadow
-  gocyclo:
-    min-complexity: 14
-  goconst:
-    min-len: 3
-    min-occurrences: 3
-  misspell:
-    locale: US
-  gofumpt:
-    extra-rules: true
-  depguard:
+  settings:
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: github.com/instana/testify
+              desc: not allowed
+            - pkg: github.com/pkg/errors
+              desc: Should be replaced by standard lib errors package
+    forbidigo:
+      forbid:
+        - pattern: ^print(ln)?$
+        - pattern: ^panic$
+        - pattern: ^spew\.Print(f|ln)?$
+        - pattern: ^spew\.Dump$
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+    gocritic:
+      disabled-checks:
+        - unnamedResult
+        - sloppyReassign
+        - rangeValCopy
+        - octalLiteral
+        - paramTypeCombine # already handle by gofumpt.extra-rules
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+      settings:
+        hugeParam:
+          sizeThreshold: 100
+    gocyclo:
+      min-complexity: 14
+    godox:
+      keywords:
+        - FIXME
+    gosec:
+      excludes:
+        - G306
+        - G304
+    govet:
+      enable:
+        - shadow
+    misspell:
+      locale: US
+    perfsprint:
+      err-error: true
+      errorf: true
+      sprintf1: true
+      strconcat: false
+  exclusions:
     rules:
-      main:
-        deny:
-          - pkg: "github.com/instana/testify"
-            desc: not allowed
-          - pkg: "github.com/pkg/errors"
-            desc: Should be replaced by standard lib errors package
-  godox:
-    keywords:
-      - FIXME
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - style
-      - performance
-    disabled-checks:
-      - unnamedResult
-      - sloppyReassign
-      - rangeValCopy
-      - octalLiteral
-      - paramTypeCombine # already handle by gofumpt.extra-rules
-    settings:
-      hugeParam:
-        sizeThreshold: 100
-  forbidigo:
-    forbid:
-      - '^print(ln)?$'
-      - '^panic$'
-      - '^spew\.Print(f|ln)?$'
-      - '^spew\.Dump$'
-  gosec:
-    excludes:
-      - G306
-      - G304
-  perfsprint:
-    err-error: true
-    errorf: true
-    sprintf1: true
-    strconcat: false
+      - linters:
+          - funlen
+        path: (.+)_test.go
+      - path: version.go
+        text: (version|date|commit) is a global variable
+      - path: fixtures_test.go
+        text: (sampleMain20|sampleGoMod20) is a global variable
+      - path: upgrader.go
+        text: cognitive complexity (\d+) of func `updatePackages` is high
+      - path: (.+)\.go$
+        text: 'package-comments: should have a package comment'
 
 issues:
-  exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
-  exclude:
-    - 'package-comments: should have a package comment'
-  exclude-rules:
-    - path: (.+)_test.go
-      linters:
-        - funlen
-    - path: version.go
-      text: (version|date|commit) is a global variable
-    - path: fixtures_test.go
-      text: (sampleMain20|sampleGoMod20) is a global variable
-    - path: upgrader.go
-      text: cognitive complexity (\d+) of func `updatePackages` is high
-
-run:
-  timeout: 2m

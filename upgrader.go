@@ -38,6 +38,7 @@ func updatePackages(dir, lib, newVersion string, onlyFilename bool) error {
 	for _, p := range pkgs {
 		for _, syn := range p.Syntax {
 			var rewritten bool
+
 			for _, imp := range syn.Imports {
 				trim := strings.Trim(imp.Path.Value, `"`)
 				parts := strings.Split(trim, "/")
@@ -71,6 +72,7 @@ func updatePackages(dir, lib, newVersion string, onlyFilename bool) error {
 
 			err = format.Node(f, p.Fset, syn)
 			_ = f.Close()
+
 			if err != nil {
 				return fmt.Errorf("could not rewrite go file %s: %w", goFileName, err)
 			}
@@ -161,6 +163,7 @@ func guessVersion(lib string, latest bool, rawVersion string) (string, string, e
 	client := goproxy.NewClient("")
 
 	var moduleName string
+
 	if latest || rawVersion == "latest" {
 		latestVersion, err := findHighestFromGoPkg(lib)
 		if err != nil {
