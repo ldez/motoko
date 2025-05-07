@@ -3,11 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"golang.org/x/tools/go/analysis/analysistest"
 )
 
 const (
@@ -43,42 +44,17 @@ require (
 `
 )
 
-func setupTestProject(t *testing.T) (string, error) {
+func setupTestProject(t *testing.T, casePath string) (string, error) {
 	t.Helper()
 
 	dir := t.TempDir()
 
-	for _, filename := range []string{"main.go", "go.mod", "go.sum"} {
-		err := copyFile(dir, filename)
-		if err != nil {
-			return "", err
-		}
+	err := os.CopyFS(dir, os.DirFS(filepath.Join(analysistest.TestData(), casePath)))
+	if err != nil {
+		return "", err
 	}
 
 	return dir, nil
-}
-
-func copyFile(dir, filename string) error {
-	src, err := os.Open(filepath.FromSlash("./testdata/a/" + filename))
-	if err != nil {
-		return err
-	}
-
-	defer func() { _ = src.Close() }()
-
-	dst, err := os.Create(filepath.Join(dir, filename))
-	if err != nil {
-		return err
-	}
-
-	defer func() { _ = dst.Close() }()
-
-	_, err = io.Copy(dst, src)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func quickDiff(got, want string) string {

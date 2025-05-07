@@ -52,7 +52,7 @@ func Test_updateCmd(t *testing.T) {
 
 	for _, test := range testCases {
 		t.Run(test.desc, func(t *testing.T) {
-			dir, err := setupTestProject(t)
+			dir, err := setupTestProject(t, "a")
 			if err != nil {
 				t.Fatal(err)
 			}

@@ -7,13 +7,7 @@ import (
 )
 
 func Test_updatePackages(t *testing.T) {
-	if os.Getenv("TRAVIS") == "true" {
-		// Because "GetSizesGolist" doesn't work well on Travis.
-		// https://github.com/golang/tools/blob/16909d206f00da7d0d5ba28cd9dc7fb223648ecf/go/internal/packagesdriver/sizes.go#L80
-		t.Skipf("TRAVIS=true")
-	}
-
-	dir, err := setupTestProject(t)
+	dir, err := setupTestProject(t, "a")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +77,7 @@ func Test_createNewImport(t *testing.T) {
 }
 
 func Test_updateModFile(t *testing.T) {
-	dir, err := setupTestProject(t)
+	dir, err := setupTestProject(t, "a")
 	if err != nil {
 		t.Fatal(err)
 	}
