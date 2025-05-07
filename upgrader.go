@@ -1,21 +1,18 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"go/format"
-	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/andybalholm/cascadia"
 	"github.com/ldez/grignotin/goproxy"
+	"github.com/ldez/motoko/internal"
 	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/semver"
-	"golang.org/x/net/html"
 	"golang.org/x/tools/go/ast/astutil"
 	"golang.org/x/tools/go/packages"
 )
@@ -165,7 +162,7 @@ func guessVersion(lib string, latest bool, rawVersion string) (string, string, e
 	var moduleName string
 
 	if latest || rawVersion == "latest" {
-		latestVersion, err := findHighestFromGoPkg(lib)
+		latestVersion, err := internal.FindHighestFromGoPkg(lib)
 		if err != nil {
 			return "", "", err
 		}
@@ -181,41 +178,4 @@ func guessVersion(lib string, latest bool, rawVersion string) (string, string, e
 	}
 
 	return lst.Version, semver.Major(lst.Version), nil
-}
-
-func findHighestFromGoPkg(lib string) (string, error) {
-	licenseURL := fmt.Sprintf("https://pkg.go.dev/%s", lib)
-
-	req, err := http.NewRequest(http.MethodGet, licenseURL, http.NoBody)
-	if err != nil {
-		return "", err
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return "", err
-	}
-
-	defer func() { _ = resp.Body.Close() }()
-
-	doc, err := html.Parse(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	compile := cascadia.MustCompile("div.go-Main-banner div.go-Message.go-Message--notice a")
-
-	node := cascadia.Query(doc, compile)
-	if node != nil && node.FirstChild != nil {
-		client := goproxy.NewClient("")
-
-		latest, err := client.GetLatest(path.Join(lib, node.FirstChild.Data))
-		if err != nil {
-			return "", err
-		}
-
-		return latest.Version, nil
-	}
-
-	return "", errors.New("highest major version not found")
 }

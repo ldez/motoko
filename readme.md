@@ -18,11 +18,19 @@ Usage of motoko:
   motoko <command> [<flags>]
 
 Commands:
+  find     [<flags>]
   update   [<flags>]
   version  [<flags>]
 
 Flags:
   --help,-h  Display help
+
+```
+
+### Find
+
+```bash
+motoko find
 ```
 
 ### Update
@@ -39,7 +47,7 @@ Usage of update:
         Version to set.
 ```
 
-### Examples
+#### Examples
 
 ```bash
 # update to the latest version:

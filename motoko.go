@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -26,6 +27,8 @@ type config struct {
 func main() {
 	cfg := config{}
 
+	findCommand := flag.NewFlagSet("find", flag.ExitOnError)
+
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)
 	updateCommand.StringVar(&cfg.lib, "lib", "", "Lib to update. (Required)")
 	updateCommand.StringVar(&cfg.version, "version", "", "Version to set.")
@@ -34,7 +37,7 @@ func main() {
 
 	versionCommand := flag.NewFlagSet("version", flag.ExitOnError)
 
-	cmds := []*flag.FlagSet{updateCommand, versionCommand}
+	cmds := []*flag.FlagSet{findCommand, updateCommand, versionCommand}
 
 	if len(os.Args) < minArgNumber {
 		fmt.Fprintln(os.Stderr, "A subcommand is required.")
@@ -63,9 +66,16 @@ func main() {
 	}
 
 	switch {
+	case findCommand.Parsed():
+		err := findCmd(context.Background())
+		if err != nil {
+			log.Fatal(err)
+		}
+
 	case versionCommand.Parsed():
 		displayVersion()
 		os.Exit(0)
+
 	case updateCommand.Parsed():
 		err := updateCmd(cfg)
 		if err != nil {
