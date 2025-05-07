@@ -77,23 +77,46 @@ func Test_createNewImport(t *testing.T) {
 }
 
 func Test_updateModFile(t *testing.T) {
-	dir, err := setupTestProject(t, "a")
-	if err != nil {
-		t.Fatal(err)
+	testCases := []struct {
+		desc     string
+		dir      string
+		expected string
+	}{
+		{
+			desc:     "one block",
+			dir:      "a",
+			expected: sampleGoMod20,
+		},
+		{
+			desc:     "two blocks",
+			dir:      "b",
+			expected: sampleGoMod20Blocks,
+		},
 	}
 
-	err = updateModFile(dir, "github.com/google/go-github", "v20.0.0", "v20")
-	if err != nil {
-		t.Fatal(err)
-	}
+	for _, test := range testCases {
+		t.Run(test.desc, func(t *testing.T) {
+			dir, err := setupTestProject(t, test.dir)
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	mod, err := os.ReadFile(filepath.Join(filepath.Clean(dir), "go.mod"))
-	if err != nil {
-		t.Fatal(err)
-	}
+			err = updateModFile(dir, "github.com/google/go-github", "v20.0.0", "v20")
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	if string(mod) != sampleGoMod20 {
-		t.Errorf("got diffs:\n%s", quickDiff(string(mod), sampleGoMod20))
+			mod, err := os.ReadFile(filepath.Join(filepath.Clean(dir), "go.mod"))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			t.Log(string(mod))
+
+			if string(mod) != test.expected {
+				t.Errorf("got diffs:\n%s", quickDiff(string(mod), test.expected))
+			}
+		})
 	}
 }
 

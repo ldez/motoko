@@ -38,9 +38,21 @@ go 1.15
 
 // test
 require (
-	github.com/google/go-querystring v1.0.0 // indirect
+	// test
 	github.com/google/go-github/v20 v20.0.0
+	github.com/google/go-querystring v1.0.0 // indirect
 )
+`
+
+	sampleGoMod20Blocks = `module motoko.test
+
+go 1.23.0
+
+// test
+require github.com/google/go-github/v20 v20.0.0
+
+// test
+require github.com/google/go-querystring v1.0.0 // indirect
 `
 )
 

@@ -129,10 +129,10 @@ func updateModFile(dir, lib, full, major string) error {
 			continue
 		}
 
-		err = file.DropRequire(require.Mod.Path)
-		if err != nil {
-			return err
-		}
+		// Replaces the current module path:
+		// when the `AddRequire` adds the new path,
+		// the existing module will be replaced instead of be added at the end of the last `require` block.
+		require.Mod.Path = path.Join(lib, major)
 	}
 
 	err = file.AddRequire(path.Join(lib, major), full)
