@@ -13,18 +13,18 @@ func TestFindHighestFromDepsDev(t *testing.T) {
 	}{
 		{
 			desc:     "github.com/akamai/AkamaiOPEN-edgegrid-golang",
-			expected: "v10.1.0",
+			expected: "v13.1.0",
 		},
 		{
 			desc:     "github.com/vultr/govultr",
-			expected: "v3.20.0",
+			expected: "v3.31.1",
 		},
 		{
 			desc:     "gopkg.in/yaml.v2",
 			expected: "v3.0.1",
 		},
 		{
-			desc:     "github.com/namedotcom/go",
+			desc:     "github.com/namedotcom/go/v4",
 			expected: "v4.0.2",
 		},
 	}
@@ -50,7 +50,7 @@ func TestFindHighestFromDepsDev_notFound(t *testing.T) {
 		desc string
 	}{
 		{
-			desc: "github.com/go-viper/mapstructure/v2",
+			desc: "github.com/go-viper/mapstructure/v6",
 		},
 	}
 

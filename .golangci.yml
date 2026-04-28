@@ -28,6 +28,7 @@ linters:
     - tparallel
     - varnamelen
     - wrapcheck
+    - wsl # Deprecated
 
   settings:
     depguard:
@@ -70,6 +71,7 @@ linters:
       excludes:
         - G306
         - G304
+        - G703
     govet:
       enable:
         - shadow

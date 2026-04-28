@@ -57,16 +57,7 @@ func Test_updateCmd(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			wd, err := os.Getwd()
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			t.Cleanup(func() { _ = os.Chdir(wd) })
-
-			if os.Chdir(dir) != nil {
-				t.Fatal(err)
-			}
+			t.Chdir(dir)
 
 			cfg := config{
 				lib:     "github.com/google/go-github",
