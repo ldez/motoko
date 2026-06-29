@@ -15,6 +15,13 @@ import (
 	"github.com/ldez/grignotin/goproxy"
 )
 
+// MajorNotFoundError returned when there are no major versions.
+type MajorNotFoundError struct{}
+
+func (m *MajorNotFoundError) Error() string {
+	return "highest major version not found"
+}
+
 // InsightVersions represents a subsets of field from devs.dep.
 type InsightVersions struct {
 	Version struct {

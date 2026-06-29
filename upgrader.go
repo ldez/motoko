@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"go/format"
 	"os"
@@ -9,8 +10,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ldez/grignotin/goproxy"
-	"github.com/ldez/motoko/internal"
+	"github.com/ldez/motoko/internal/pkgsite"
 	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/semver"
 	"golang.org/x/tools/go/ast/astutil"
@@ -152,30 +152,34 @@ func updateModFile(dir, lib, full, major string) error {
 	return os.WriteFile(modPath, data, stat.Mode())
 }
 
-func guessVersion(lib string, latest bool, rawVersion string) (string, string, error) {
+func guessVersion(ctx context.Context, lib string, latest bool, rawVersion string) (string, string, error) {
 	if ok, _ := regexp.MatchString(`^v?\d+\.\d+\.\d+.*$`, rawVersion); ok {
 		return rawVersion, semver.Major(rawVersion), nil
 	}
 
-	client := goproxy.NewClient("")
-
-	var moduleName string
+	client := pkgsite.NewClient(nil)
 
 	if latest || rawVersion == "latest" {
-		latestVersion, err := internal.FindHighestFromGoPkg(lib)
+		versions, err := client.Versions(ctx, lib, &pkgsite.ListParams{Limit: 1})
 		if err != nil {
 			return "", "", err
 		}
 
-		moduleName = path.Join(lib, semver.Major(latestVersion))
-	} else {
-		moduleName = path.Join(lib, "v"+strings.TrimPrefix(rawVersion, "v"))
+		if len(versions.Items) != 1 {
+			return "", "", fmt.Errorf("could not find the version for %s", lib)
+		}
+
+		v := versions.Items[0].Version
+
+		return v, semver.Major(v), nil
 	}
 
-	lst, err := client.GetLatest(moduleName)
+	moduleName := path.Join(lib, "v"+strings.TrimPrefix(rawVersion, "v"))
+
+	module, err := client.Module(ctx, moduleName, &pkgsite.ModuleParams{Version: "latest"})
 	if err != nil {
 		return "", "", err
 	}
 
-	return lst.Version, semver.Major(lst.Version), nil
+	return module.Version, semver.Major(module.Version), nil
 }

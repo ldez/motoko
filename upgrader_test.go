@@ -164,8 +164,8 @@ func Test_guessVersion(t *testing.T) {
 			baseModuleName: "github.com/cenkalti/backoff",
 			raw:            "latest",
 			expected: expected{
-				Major: "v5",
-				Full:  "v5.0.3",
+				Major: "v6",
+				Full:  "v6.0.1",
 			},
 		},
 	}
@@ -174,7 +174,7 @@ func Test_guessVersion(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
-			full, major, err := guessVersion(test.baseModuleName, false, test.raw)
+			full, major, err := guessVersion(t.Context(), test.baseModuleName, false, test.raw)
 			if err != nil {
 				t.Fatal(err)
 			}

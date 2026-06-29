@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
@@ -12,7 +13,7 @@ import (
 	"sync"
 
 	"github.com/ldez/grignotin/goenv"
-	"github.com/ldez/motoko/internal"
+	"github.com/ldez/motoko/internal/pkgsite"
 	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/semver"
 )
@@ -41,6 +42,8 @@ func findCmd(ctx context.Context) error {
 		return err
 	}
 
+	worker := Worker{client: pkgsite.NewClient(nil)}
+
 	resultsChan := make(chan updateModule)
 	requiresChan := make(chan *modfile.Require, maxWorkers)
 
@@ -50,7 +53,7 @@ func findCmd(ctx context.Context) error {
 
 		for range maxWorkers {
 			go func() {
-				workerFind(ctx, requiresChan, resultsChan)
+				worker.find(ctx, requiresChan, resultsChan)
 				wg.Done()
 			}()
 		}
@@ -78,25 +81,41 @@ func findCmd(ctx context.Context) error {
 	return nil
 }
 
-func workerFind(ctx context.Context, inChan <-chan *modfile.Require, outChan chan<- updateModule) {
+type Worker struct {
+	client *pkgsite.Client
+}
+
+func (w *Worker) find(ctx context.Context, inChan <-chan *modfile.Require, outChan chan<- updateModule) {
 	exp := regexp.MustCompile(`(.+)([/.])v\d+$`)
 
 	for require := range inChan {
 		modPath := require.Mod.Path
 
-		latestVersion, err := internal.FindHighestFromDepsDev(ctx, modPath)
+		versions, err := w.client.Versions(ctx, modPath, &pkgsite.ListParams{Limit: 1})
 		if err != nil {
-			var mnf *internal.MajorNotFoundError
-			if !errors.As(err, &mnf) {
+			mnf, ok := errors.AsType[*pkgsite.APIError](err)
+			if !ok || mnf.Code != http.StatusNotFound {
 				if _, ok := os.LookupEnv("MOTOKO_DEBUG"); ok {
-					log.Println(err)
+					log.Println(modPath, err)
 				}
 			}
 
 			continue
 		}
 
-		newVersion := path.Join(modPath, semver.Major(latestVersion))
+		if len(versions.Items) != 1 {
+			continue
+		}
+
+		latestVersion := versions.Items[0].Version
+
+		major := semver.Major(latestVersion)
+
+		if major == "v0" || major == "v1" {
+			continue
+		}
+
+		newVersion := path.Join(modPath, major)
 
 		if exp.MatchString(require.Mod.Path) {
 			newVersion = exp.FindStringSubmatch(modPath)[1] + exp.FindStringSubmatch(modPath)[2] + semver.Major(latestVersion)
