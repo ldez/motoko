@@ -13,7 +13,7 @@ func TestFindHighestFromDepsDev(t *testing.T) {
 	}{
 		{
 			desc:     "github.com/akamai/AkamaiOPEN-edgegrid-golang",
-			expected: "v13.2.0",
+			expected: "v13.3.0",
 		},
 		{
 			desc:     "github.com/vultr/govultr",

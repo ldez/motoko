@@ -115,7 +115,7 @@ func updateCmd(cfg config) error {
 		cfg.version = ""
 	}
 
-	full, mj, err := guessVersion(cfg.lib, cfg.latest, cfg.version)
+	full, mj, err := guessVersion(context.TODO(), cfg.lib, cfg.latest, cfg.version)
 	if err != nil {
 		return err
 	}
