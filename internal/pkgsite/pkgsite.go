@@ -5,14 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
-	"path"
-	"regexp"
-	"strconv"
-	"strings"
 	"time"
 
 	querystring "github.com/google/go-querystring/query"
@@ -96,8 +91,7 @@ func (c *Client) Versions(ctx context.Context, mPath string, params *ListParams)
 	return result, nil
 }
 
-// Latest workaround because of a bug https://github.com/golang/go/issues/79632.
-// But this is not a good solution because of the rate limits of the API.
+// Latest gets the latest version of a module.
 func (c *Client) Latest(ctx context.Context, mPath string) (string, error) {
 	versions, err := c.Versions(ctx, mPath, &ListParams{Limit: 1})
 	if err != nil {
@@ -108,42 +102,7 @@ func (c *Client) Latest(ctx context.Context, mPath string) (string, error) {
 		return "", fmt.Errorf("no versions found for %s", mPath)
 	}
 
-	version := versions.Items[0]
-
-	if !strings.HasPrefix(version.Version, "v9.") {
-		return version.LatestVersion, nil
-	}
-
-	exp := regexp.MustCompile(`(.+)/v(\d+)$`)
-
-	parts := exp.FindStringSubmatch(version.ModulePath)
-
-	v, err := strconv.Atoi(parts[2])
-	if err != nil {
-		return "", err
-	}
-
-	increment := 1
-
-	latestVersion := version.LatestVersion
-
-	for {
-		mp := path.Join(parts[1], "v"+strconv.Itoa(v+increment))
-
-		module, err := c.Module(ctx, mp, &ModuleParams{Version: "latest"})
-		if err != nil {
-			log.Println("module", mp, err)
-			break
-		}
-
-		latestVersion = module.Version
-	}
-
-	if latestVersion == "" {
-		return "", &APIError{Code: http.StatusNotFound, Message: "no latest version found"}
-	}
-
-	return latestVersion, nil
+	return versions.Items[0].LatestVersion, nil
 }
 
 func (c *Client) do(ctx context.Context, endpoint *url.URL, result any) error {
