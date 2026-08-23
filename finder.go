@@ -92,6 +92,7 @@ func (w *Worker) find(ctx context.Context, inChan <-chan *modfile.Require, outCh
 		modPath := require.Mod.Path
 
 		latestVersion, err := w.client.Latest(ctx, modPath) // if err != nil {
+
 		mnf, ok := errors.AsType[*pkgsite.APIError](err)
 		if !ok || mnf.Code != http.StatusNotFound {
 			if _, ok := os.LookupEnv("MOTOKO_DEBUG"); ok {
