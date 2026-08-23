@@ -160,16 +160,10 @@ func guessVersion(ctx context.Context, lib string, latest bool, rawVersion strin
 	client := pkgsite.NewClient(nil)
 
 	if latest || rawVersion == "latest" {
-		versions, err := client.Versions(ctx, lib, &pkgsite.ListParams{Limit: 1})
+		v, err := client.Latest(ctx, lib)
 		if err != nil {
 			return "", "", err
 		}
-
-		if len(versions.Items) != 1 {
-			return "", "", fmt.Errorf("could not find the version for %s", lib)
-		}
-
-		v := versions.Items[0].Version
 
 		return v, semver.Major(v), nil
 	}

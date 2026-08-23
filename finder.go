@@ -91,23 +91,13 @@ func (w *Worker) find(ctx context.Context, inChan <-chan *modfile.Require, outCh
 	for require := range inChan {
 		modPath := require.Mod.Path
 
-		versions, err := w.client.Versions(ctx, modPath, &pkgsite.ListParams{Limit: 1})
-		if err != nil {
-			mnf, ok := errors.AsType[*pkgsite.APIError](err)
-			if !ok || mnf.Code != http.StatusNotFound {
-				if _, ok := os.LookupEnv("MOTOKO_DEBUG"); ok {
-					log.Println(modPath, err)
-				}
+		latestVersion, err := w.client.Latest(ctx, modPath) // if err != nil {
+		mnf, ok := errors.AsType[*pkgsite.APIError](err)
+		if !ok || mnf.Code != http.StatusNotFound {
+			if _, ok := os.LookupEnv("MOTOKO_DEBUG"); ok {
+				log.Println(modPath, err)
 			}
-
-			continue
 		}
-
-		if len(versions.Items) != 1 {
-			continue
-		}
-
-		latestVersion := versions.Items[0].Version
 
 		major := semver.Major(latestVersion)
 
